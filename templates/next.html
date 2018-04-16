@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Collections</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    {% if role=='admin' %}
+        {% include 'nav_admin.html' %}
+        <form method="get" action="show">
+    {% endif %}
+    <!--<div w3-include-html="/admin/nav"></div>-->
+
+
+    <center>
+        <div class="form-group">
+            {% if req %}
+                <h4>Your Crawling Job is queued with Request ID : {{ req }} </h4>
+                <br/>
+            {% endif %}
+
+            <label for="project_name">Project Name: </label>
+            <input name="pn" type="text" class="form-control" id="project_name" required>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-info btn-lg">Submit</button>
+        </div>
+    </center>
+    </form>
+    {% if urls %}
+        <div class="table-responsive">
+            <table class="table" id="myTable">
+                <thead class="thead-dark">
+                <tr>
+                    <th onclick="sortTable(0)">URL</th>
+                    <th onclick="sortTable(1)">Rank</th>
+                    <th onclick="sortTable(2)">Title</th>
+                </tr>
+                </thead>
+                {% for u in urls %}
+                    <tr>
+                        <td style="padding:0 5px 0 5px;" width="50%"><a href={{ u.url }}>{{ u.url }}</a></td>
+                        <td style="padding:0 5px 0 5px;">{{ u.new_rank }}</td>
+                        <td style="padding:0 5px 0 5px;">{{ u.title[0] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("myTable");
+        switching = true;
+        //Set the sorting direction to ascending:
+        dir = "asc";
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.getElementsByTagName("TR");
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        //if so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount++;
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

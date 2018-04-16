@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        ::-ms-clear {
+            display: none;
+        }
+
+        .form-control-clear {
+            z-index: 10;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .highlight {
+            background: #FFFF40;
+        }
+
+        .searchheading {
+            font-size: 130%;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        .summary {
+            font-size: 100%;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .suggestion {
+            font-size: 100%;
+        }
+
+        .results {
+            font-size: 100%;
+            line-height: 150%;
+        }
+
+        .category {
+            color: #999999;
+        }
+
+        .sorting {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .result_title {
+            font-size: 100%;
+        }
+
+        .description {
+            font-size: 100%;
+            color: #008000;
+        }
+
+        .context {
+            font-size: 100%;
+        }
+
+        .infoline {
+            font-size: 80%;
+            font-style: normal;
+            color: #808080;
+        }
+
+        form.zoom_searchform {
+            font-size: 100%;
+            margin-bottom: 10px;
+        }
+
+        .zoom_results_per_page {
+            font-size: 80%;
+            margin-left: 10px;
+        }
+
+        .zoom_match {
+            font-size: 80%;
+            margin-left: 10px;
+        }
+
+        .zoom_categories {
+            font-size: 80%;
+        }
+
+        .zoom_categories ul {
+            display: inline;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .zoom_categories li {
+            display: inline;
+            margin-left: 15px;
+            list-style-type: none;
+        }
+
+        input.zoom_button {
+        }
+
+        input.zoom_searchbox {
+        }
+
+        .result_image {
+            float: left;
+            display: block;
+        }
+
+        .result_image img {
+            margin: 10px;
+            width: 80px;
+            border: 0px;
+        }
+
+        .result_block {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            clear: left;
+        }
+
+        .result_altblock {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            clear: left;
+        }
+
+        .result_pages {
+            font-size: 100%;
+        }
+
+        .result_pagescount {
+            font-size: 100%;
+        }
+
+        .searchtime {
+            font-size: 80%;
+        }
+
+        .cat_summary ul {
+            margin: 0px;
+            padding: 0px;
+            display: inline;
+        }
+
+        .cat_summary li {
+            display: inline;
+            margin-left: 15px;
+            list-style-type: none;
+        }
+
+        .recommended {
+            background: #DFFFBF;
+            border-top: 1px dotted #808080;
+            border-bottom: 1px dotted #808080;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .recommended_heading {
+            float: right;
+            font-weight: bold;
+        }
+
+        .recommend_block {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            clear: left;
+        }
+
+        .recommend_title {
+            font-size: 100%;
+        }
+
+        .recommend_description {
+            font-size: 100%;
+            color: #008000;
+        }
+
+        .recommend_infoline {
+            font-size: 80%;
+            font-style: normal;
+            color: #808080;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Smart Search</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="user">Home</a></li>
+                <li><a href="about">About</a></li>
+                <li><a href="contact">Contact Us</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            </ul>
+        </div>
+    </nav>
+    <form method="get" action="/user"><br>
+        <div class="form-group">
+            <div class="form-group has-feedback has-clear">
+                <label for="keyword">Search Here</label>
+                <input name="q" type="text" class="form-control" width="500px" id="q" value="{{ k }}"
+                       placeholder="Enter your Query here" required>
+                <span class="form-control-clear glyphicon glyphicon-remove form-control-feedback hidden"></span>
+            </div>
+        </div>
+        <strong>Select Type :</strong>
+        <label class="radio-inline"><input type="radio" name="or" value="1" checked>Exact Phrase</label>
+        <label class="radio-inline"><input type="radio" name="or" value="2">Any Word</label>
+        <label class="radio-inline"><input type="radio" name="or" value="3">All Words</label>
+        <div align="center">
+            <button type="submit" class="btn btn-info btn-lg">Search</button>
+        </div>
+        <ul>
+        </ul>
+        <div class="results">
+            {% if nodata %}
+                Sorry no results found for <strong> {{ k }} </strong>
+            {% endif %}
+            {% if out %}
+                About {{ length }} results found <br>
+                Search results for <strong> {{ k }} </strong>
+                {% for u in out %}
+                    <div class="result_block">
+                        <div class="result_title">
+                            <a href={{ u.url }}>{{ u.title[0] }}</a>
+                        </div>
+                        <div class="description">{{ u.url }}</div>
+                        <div class="context">{{ u.p }}</div>
+                    </div>
+                {% endfor %}
+                <center>
+                    {% for i1 in no_of_pages %}
+                        <button class="btn-default" id="{{ i1 }}" name="pb" value="{{ i1 }}">{{ i1 }}</button>
+                    {% endfor %}
+                </center>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<script>
+    $('.has-clear input[type="text"]').on('input propertychange', function () {
+        var $this = $(this);
+        var visible = Boolean($this.val());
+        $this.siblings('.form-control-clear').toggleClass('hidden', !visible);
+    }).trigger('propertychange');
+
+    $('.form-control-clear').click(function () {
+        $(this).siblings('input[type="text"]').val('')
+            .trigger('propertychange').focus();
+    });
+</script>
+</body>
+</html>
