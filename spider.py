@@ -31,16 +31,16 @@ def crawl(collection_name, start_url, no_of_pages):
     query = {"url": href}
     cur = db[collection_name].find(query)
     already = False
-    print("hey")
+    # print("hey")
     for c in cur:
-        print("here")
+        #print("here")
         already = True
         break
 
     link_table = collection_name + "_links"
     initial_dict = {}
     if already:
-        print("ALREADY")
+        #print("ALREADY")
         query = {"title": None, "aKey": None}
         project = {"_id": 1, "url": 1, "title": 1, "old_rank": 1, "new_rank": 1, "error": 1}
         cur = db[collection_name].find(query, project)
@@ -52,7 +52,6 @@ def crawl(collection_name, start_url, no_of_pages):
             if tldextract.extract(c['url']).domain == collection_name:
                 initial_dict[c['url']] = obj
     else:
-        print("DON")
         starturl = start_url
         if (len(starturl) < 1): starturl = 'wikipedia.org'
         if (starturl.endswith('/')): starturl = starturl[:-1]
